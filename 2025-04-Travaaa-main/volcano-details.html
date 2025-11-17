@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dettagli Vulcano</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #ff64ff;
+            border-bottom: 2px solid #ff64ff;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .info-item {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #64ff64;
+            border: 1px solid rgba(100, 255, 100, 0.3);
+        }
+        .info-label {
+            font-weight: bold;
+            color: #64ff64;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            font-size: 16px;
+            color: #e0e0e0;
+        }
+        .back-button {
+            background: linear-gradient(45deg, #64ff64, #ff64ff);
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .back-button:hover {
+            background: linear-gradient(45deg, #78ff78, #ff78ff);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(100, 255, 100, 0.3);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-historical {
+            background-color: rgba(255, 100, 255, 0.9);
+            color: white;
+            border: 1px solid #ff64ff;
+        }
+        .status-holocene {
+            background-color: rgba(180, 120, 200, 0.9);
+            color: white;
+            border: 1px solid #b478c8;
+        }
+        .status-pleistocene {
+            background-color: rgba(120, 200, 120, 0.9);
+            color: black;
+            border: 1px solid #78c878;
+        }
+        .status-hydrophonic {
+            background-color: rgba(100, 180, 150, 0.9);
+            color: white;
+            border: 1px solid #64b496;
+        }
+        .status-default {
+            background-color: rgba(100, 255, 100, 0.9);
+            color: black;
+            border: 1px solid #64ff64;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="volcano-name">Nome Vulcano</h1>
+        
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Paese</div>
+                <div class="info-value" id="country">-</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Località</div>
+                <div class="info-value" id="location">-</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Elevazione</div>
+                <div class="info-value" id="elevation">-</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Tipo</div>
+                <div class="info-value" id="type">-</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Stato</div>
+                <div class="info-value" id="status">-</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Ultima Eruzione</div>
+                <div class="info-value" id="eruption">-</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Coordinate</div>
+                <div class="info-value" id="coordinates">-</div>
+            </div>
+        </div>
+        
+        <a href="index.html" class="back-button">← Torna alla Mappa</a>
+    </div>
+
+    <script>
+        // Funzione per ottenere i parametri URL
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        // Funzione per determinare la classe CSS dello stato
+        function getStatusClass(status) {
+            const statusLower = status.toLowerCase();
+            if (statusLower === 'historical') return 'status-historical';
+            if (statusLower === 'holocene') return 'status-holocene';
+            if (statusLower === 'pleistocene') return 'status-pleistocene';
+            if (statusLower === 'hydrophonic') return 'status-hydrophonic';
+            return 'status-default';
+        }
+        
+        // Popolamento dei dati dalla URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const name = getUrlParameter('name') || 'Vulcano Sconosciuto';
+            const country = getUrlParameter('country') || 'Sconosciuto';
+            const location = getUrlParameter('location') || 'Sconosciuto';
+            const elevation = getUrlParameter('elevation') || '0';
+            const type = getUrlParameter('type') || 'Sconosciuto';
+            const status = getUrlParameter('status') || 'Sconosciuto';
+            const eruption = getUrlParameter('eruption') || 'Sconosciuto';
+            const lat = getUrlParameter('lat') || '0';
+            const lon = getUrlParameter('lon') || '0';
+            
+            document.getElementById('volcano-name').textContent = name;
+            document.getElementById('country').textContent = country;
+            document.getElementById('location').textContent = location;
+            document.getElementById('elevation').textContent = elevation + ' m';
+            document.getElementById('type').textContent = type;
+            
+            // Status con badge colorato
+            const statusElement = document.getElementById('status');
+            statusElement.innerHTML = `<span class="status-badge ${getStatusClass(status)}">${status}</span>`;
+            
+            document.getElementById('eruption').textContent = eruption;
+            document.getElementById('coordinates').textContent = `${parseFloat(lat).toFixed(4)}°, ${parseFloat(lon).toFixed(4)}°`;
+        });
+    </script>
+</body>
+</html>
